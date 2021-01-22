@@ -34,8 +34,14 @@ class cali_control(QDialog):
             time.sleep(CAL_SAMPLE_INTV)
     
     def do_calibration(self):
+        # Do least square calibration
         self.parent.parent.coeff = least_sq_calibration(self.vec_array)
+        # Enable buttons on main window
         self.parent.parent.btnStart.setEnabled(True)
+        self.parent.parent.btnValidation.setEnabled(True)
+        # Close window
+        self.cali_display.close()
+        self.close()
 
     # Need to be simplified
     def show_cali_display_1(self):

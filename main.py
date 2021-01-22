@@ -14,6 +14,7 @@ from centroid_tracker import *
 from common_define import *
 # Self-defined widget
 from calibration_widget import *
+from validation_window import *
 
 # Main window class
 class main_window(QMainWindow):
@@ -35,6 +36,7 @@ class main_window(QMainWindow):
 
         # Controls of tracking
         self.do_tracking = False
+        self.validation_ready = False
 
         # Final data
         self.data_position = 0
@@ -45,7 +47,9 @@ class main_window(QMainWindow):
         self.start_camera()
         self.tracker = centroid_tracker(self)
         self.cali_widget = calibration_widget(self)
-        self.btnCalibration.clicked.connect(self.cali_widget.show)
+        self.vali_widget = vali_control(self)
+        self.btnCalibration.clicked.connect(self.start_calibration)
+        self.btnValidation.clicked.connect(self.start_validation)
         self.btnStart.clicked.connect(self.start_tracking)
         self.btnExit.clicked.connect(self.quit_app)
         self.btnSelROI.clicked.connect(self.select_roi)
@@ -62,10 +66,11 @@ class main_window(QMainWindow):
         self.image_thread.start()
 
         # Warm-up time
-        time.sleep(1)
+        time.sleep(0.5)
         # Tracker always online
+        # Tracker started when the Calibration window button is pressed
         self.tracker_thread = track_thread(self)
-        self.tracker_thread.start()
+        
         # Preview on the main window
         self.timer_maindisplay = QTimer(self)
         self.timer_maindisplay.timeout.connect(self.main_preview)
@@ -98,6 +103,16 @@ class main_window(QMainWindow):
         self.labMainPreview.setPixmap(QPixmap.fromImage(out_image))
         self.labMainPreview.setScaledContents(True)
     
+    # Start calibration window
+    def start_calibration(self):
+        self.cali_widget.timer_calpreview.start(2)
+        self.cali_widget.show()
+
+    # Start validation window
+    def start_validation(self):
+        self.validation_ready = True
+        self.vali_widget.show()
+
     def start_tracking(self):
         self.do_tracking = True
         self.btnExit.setEnabled(True)
@@ -165,24 +180,6 @@ class track_thread(QThread):
     def run(self):
         while True:
             self.parent.tracker.track()
-'''
-class record_thread(QThread):
-    def __init__(self,parent):
-        super().__init__()
-        self.parent = parent
-
-    def run(self):
-        while True:
-            if self.parent.data_position == DATA_ROW_SIZE:
-                data = np.zeros((DATA_ROW_SIZE,5))
-                self.parent.final_data.append(data)
-                self.parent.data_position = 0
-            else:
-                self.parent.final_data[-1][self.parent.data_position] = [time.time(),\
-                                                        self.parent.gaze_point[0].item(),self.parent.gaze_point[1].item(),\
-                                                        self.parent.pcr_vec[0].item(),self.parent.pcr_vec[1].item()]
-                self.parent.data_position += 1
-'''
     
 if __name__ == "__main__":
     app = QApplication(sys.argv)

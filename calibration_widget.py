@@ -17,13 +17,17 @@ class calibration_widget(QWidget):
         self.slideCRMin.setValue(self.parent.cr_min)
         self.slidePupilMax.valueChanged.connect(self.set_pupil_threshold)
         self.slideCRMin.valueChanged.connect(self.set_cr_threshold)
-        self.btnCalibrate.clicked.connect(self.cali_control.show)
+        self.btnCalibrate.clicked.connect(self.start_cali_display)
         self.btnExit.clicked.connect(self.close)
         # Update preview
         self.timer_calpreview = QTimer(self)
         self.timer_calpreview.timeout.connect(self.cali_preview)
-        self.timer_calpreview.start(2)
     
+    def start_cali_display(self):
+        # Start tracker here
+        self.parent.tracker_thread.start()
+        self.cali_control.show()
+
     def set_pupil_threshold(self):
         self.parent.pupil_max = self.slidePupilMax.value()
 
