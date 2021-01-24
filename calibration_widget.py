@@ -3,8 +3,8 @@ import numpy as np
 from PyQt5.QtWidgets import QWidget
 from PyQt5.uic import loadUi
 from PyQt5.Qt import QImage, QPixmap, QTimer
+from calibration_control import *
 
-from cali_control import *
 class calibration_widget(QWidget):
     def __init__(self,parent):
         super(calibration_widget,self).__init__()
