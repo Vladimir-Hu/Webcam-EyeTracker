@@ -1,6 +1,8 @@
 import numpy as np
 
 def least_sq_calibration(input):
+    # Filter invalid value
+    input = input[~((np.isnan(input)).any(axis=1))] 
     x = input[:,0]
     y = input[:,1]
     px = input[:,2]

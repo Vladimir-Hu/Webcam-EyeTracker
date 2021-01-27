@@ -10,14 +10,14 @@ NET_CONTROL_PORT = 10000
 NET_TRANSFER_PORT = 10010
 NET_TARGET_ADDR = '127.0.0.1'
 
-# Square lenght of calibration display
+# Square lenght of calibration and validation display
 CAL_SQUARE_LENGTH = 20
 
-# Calibration display
+# Calibration and validation display
 CAL_DISP_NUM = 1
 
 # Calibration sample size and time interval
-CAL_SAMPLE_SIZE = 10
+CAL_SAMPLE_SIZE = 40
 CAL_SAMPLE_INTV = 0.005
 
 # Data matrix row number

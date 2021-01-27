@@ -37,7 +37,8 @@ class calibration_widget(QWidget):
     def cali_preview(self):
         pupil_mask = np.expand_dims(cv2.inRange(self.parent.image,0,self.parent.pupil_max), axis=2)
         cr_mask = np.expand_dims(cv2.inRange(self.parent.image,self.parent.cr_min,255),axis=2)
-        image = cv2.cvtColor(self.parent.image,cv2.COLOR_GRAY2RGB)
+        image = np.multiply(0.70,cv2.cvtColor(self.parent.image,cv2.COLOR_GRAY2RGB))
+        image = image.astype(np.uint8)
         temp_zero = np.expand_dims(np.zeros_like(self.parent.image),axis=2)
         # Red cr & Blue pupil
         pupil_mask = np.concatenate((temp_zero,temp_zero,pupil_mask),axis=-1)

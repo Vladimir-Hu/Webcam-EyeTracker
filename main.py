@@ -31,7 +31,7 @@ class main_window(QMainWindow):
         self.cr_center = None
         self.pupil_center = None
         self.pcr_vec = None
-        self.gaze_point = None
+        self.gaze_point = np.empty(2)
         self.data_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
         # Controls of tracking
@@ -68,7 +68,7 @@ class main_window(QMainWindow):
         # Warm-up time
         time.sleep(0.5)
         # Tracker always online
-        # Tracker started when the Calibration window button is pressed
+        # Tracker started when the Calibration Window button is pressed
         self.tracker_thread = track_thread(self)
         
         # Preview on the main window
@@ -93,8 +93,10 @@ class main_window(QMainWindow):
                 pupil = (int(self.pupil_center[0]),int(self.pupil_center[1]))
                 cr = (int(self.cr_center[0]),int(self.cr_center[1]))
                 cv2.line(image,pupil,cr,255,1,1)
-            else:
-                print("Target points missing!")
+            elif np.isnan(self.pupil_center).any():
+                print("Pupil point missing! PCR vec: {}".format(self.pcr_vec))
+            elif np.isnan(self.cr_center).any():
+                print("CR point missing! PCR vec: {}".format(self.pcr_vec))
         qformat = QImage.Format_Indexed8
         out_image = QImage(image,
             image.shape[1],
@@ -113,6 +115,7 @@ class main_window(QMainWindow):
         self.validation_ready = True
         self.vali_widget.show()
 
+    # Start by button press or from NET_CONTROL_PORT
     def start_tracking(self):
         self.do_tracking = True
         self.btnExit.setEnabled(True)
@@ -121,7 +124,7 @@ class main_window(QMainWindow):
             s.bind(('127.0.0.1',NET_CONTROL_PORT))
             while True:
                 data,addr = s.recvfrom(1024)
-                if data == 'START':
+                if data == b'START':
                     break
         else:
             self.timer_data_recorder = QTimer(self)

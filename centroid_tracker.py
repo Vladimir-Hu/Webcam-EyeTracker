@@ -21,17 +21,13 @@ class centroid_tracker(object):
         pupil_center[0],pupil_center[1] = np.divide(pupil_moment['m10'],pupil_moment['m00']),\
                                         np.divide(pupil_moment['m01'],pupil_moment['m00'])
         pcr_vec = pupil_center-cr_center
-
         self.parent.pcr_vec = pcr_vec
         self.parent.pupil_center = pupil_center
         self.parent.cr_center = cr_center
-        
         polynominal = np.array([
             1,pcr_vec[0],pcr_vec[1],pcr_vec[0]*pcr_vec[1],pcr_vec[0]**2,pcr_vec[1]**2
         ])
 
         if self.parent.coeff is not None:
-            self.parent.gaze_point = np.array([
-                [np.matmul(polynominal,self.parent.coeff[:,0]).item()],
-                [np.matmul(polynominal,self.parent.coeff[:,1]).item()]
-            ])
+            self.parent.gaze_point[0] = np.matmul(polynominal,self.parent.coeff[:,0]).item()
+            self.parent.gaze_point[1] = np.matmul(polynominal,self.parent.coeff[:,1]).item()
